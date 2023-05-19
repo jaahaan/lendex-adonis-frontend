@@ -6,7 +6,7 @@
     "dev": "nuxt",
     "build": "nuxt build",
     "start": "nuxt start",
-    "export": "nuxt export",
+    "generate": "nuxt generate",
     "serve": "nuxt serve"
   },
   "dependencies": {
@@ -17,6 +17,7 @@
     "lodash": "^4.17.21",
     "nuxt": "^2.15.8",
     "universal-cookie": "^4.0.4",
+    "vue-quill-editor": "^3.0.6",
     "vuedraggable": "^2.24.3"
   },
   "devDependencies": {

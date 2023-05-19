@@ -1,0 +1,1 @@
+__NUXT_JSONP__("/testimonials/add_testimolials", {data:[{}],fetch:{},mutations:[]});

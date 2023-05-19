@@ -1,0 +1,1 @@
+__NUXT_JSONP__("/special-skills/add_skill", {data:[{}],fetch:{},mutations:[]});

@@ -13,7 +13,7 @@
           <Col :xs="24" :sm="24" :md="12" :lg="12">
             <FormItem label="Parent ID">
               <Select
-                v-model="formValue.parent_id"
+                v-model="formValue.title_id"
                 placeholder="Select Parent Menu"
                 filterable
                 clearable
@@ -115,7 +115,7 @@ export default {
         title: "",
         name: "",
         path: "",
-        parent_id: "",
+        title_id: "",
         icon: "",
         is_show: 1,
       },
@@ -139,7 +139,7 @@ export default {
         // this.data1=response.data;
         this.$store.commit("setSideBar", response.data);
         // this.newList();
-      } else this.e("Oops!", "Something went wrong, please try again!");
+      } 
       this.loading = false;
     },
     async addRouter() {
@@ -150,8 +150,8 @@ export default {
         this.errorMessages.type = "Type is required!";
         validation = false;
       }
-      if (this.formValue.parent_id == undefined) {
-        this.formValue.parent_id = "";
+      if (this.formValue.title_id == undefined) {
+        this.formValue.title_id = "";
       }
       if (this.formValue.title.trim() == "") {
         this.errorMessages.title = "Title is required!";
@@ -182,11 +182,10 @@ export default {
         this.$router.push("/routers");
       } else if (this.status == 422) {
         for (let x in response.data) {
-          this.e(response.data[x]);
+          // this.e(response.data[x]);
         }
       } else {
         this.loading = false;
-        this.swr();
       }
     },
     clearErrorMessages() {
@@ -207,14 +206,14 @@ export default {
       if (response.status == 200) {
         this.changeParentMenu();
         this.formValue = response.data;
-      } else this.swr();
+      }
       this.loading = false;
     },
     async changeParentMenu(query) {
       const response = await this.callApi("get", `/app/getParentMenu`);
       if (response.status == 200) {
         this.parentMenu = response.data;
-      } else this.swr();
+      }
     },
   },
   async created() {

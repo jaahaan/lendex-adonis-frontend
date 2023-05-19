@@ -74,11 +74,7 @@ export default {
           key: "degree",
           minWidth: 150,
         },
-        {
-          title: "Field Of Study",
-          key: "field_of_study",
-          minWidth: 150,
-        },
+
         {
           title: "Start Date",
           key: "start_date",
@@ -169,7 +165,7 @@ export default {
       let id = this.UpdateValue.id;
       const response = await this.callApi(
         "delete",
-        `/app/delete_education/${id}`
+        `/app/delete_aboutMe/${id}`
       );
       if (response.status == 200) {
         this.s("Great!", "Removed successfully!");

@@ -22,12 +22,6 @@
             placeholder="Ex: Bachelor's"
           ></Input>
         </FormItem>
-        <FormItem label="Field of study">
-          <Input
-            v-model="formValue.field_of_study"
-            placeholder="Field of study"
-          ></Input>
-        </FormItem>
 
         <div class="row">
           <div class="col-6">
@@ -56,12 +50,6 @@
             </FormItem>
           </div>
         </div>
-        <!-- <FormItem label="Grade">
-                    <Input
-                        v-model="formValue.grade"
-                        placeholder="Grade"
-                    ></Input>
-                </FormItem> -->
         <FormItem label="Description">
           <Input
             v-model="formValue.description"
@@ -97,9 +85,9 @@ export default {
       parentMenu: [],
       formValue: {
         id: 0,
+        type: "education",
         institute: "",
         degree: "",
-        field_of_study: "",
         start_date: "",
         end_date: "",
         description: "",
@@ -134,7 +122,7 @@ export default {
       this.loading = true;
       const res = await this.callApi(
         "put",
-        "/app/update_education",
+        "/app/update_aboutMe",
         this.formValue
       );
       if (res.status === 200 || res.status == 201) {
@@ -161,7 +149,7 @@ export default {
       this.loading = true;
       const response = await this.callApi(
         "get",
-        `/app/get_education/${this.$route.params.id}`
+        `/app/get_aboutMe/${this.$route.params.id}`
       );
       if (response.status == 200) {
         this.formValue = response.data;

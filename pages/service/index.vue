@@ -127,11 +127,6 @@ export default {
       },
       columns1: [
         {
-          title: "ID",
-          key: "id",
-          minWidth: 150,
-        },
-        {
           title: "Icon",
           key: "icon",
           minWidth: 150,
@@ -305,8 +300,8 @@ export default {
       this.detailsItem.data.push(ob);
 
       ob = {
-        name: "Parent ID",
-        value: this.data1[index].parent_id,
+        name: "Title ID",
+        value: this.data1[index].title_id,
       };
       this.detailsItem.data.push(ob);
 
@@ -326,7 +321,11 @@ export default {
       this.getService();
     },
     showEdit(index) {
-      this.$router.push(`/service/${this.data1[index].id}`);
+      if (this.data1[index].title_id) {
+        this.$router.push(`/service_point/${this.data1[index].id}`);
+      } else {
+        this.$router.push(`/service/${this.data1[index].id}`);
+      }
     },
     showRemove(index) {
       this.UpdateValue.name = this.data1[index].title;
@@ -339,21 +338,29 @@ export default {
     async remove() {
       this.sending = true;
       let id = this.UpdateValue.id;
-
-      const response = await this.callApi(
-        "delete",
-        `/app/delete_service/${id}`
-      );
-      if (response.status == 200) {
-        this.s("Great!", "Removed successfully!");
-
-        this.deleteModal = false;
-        this.UpdateValue.password = "";
-        this.getService();
-        // location.reload();
+      if (this.data1[this.UpdateValue.indexNumber].title_id) {
+        const response = await this.callApi(
+          "delete",
+          `/app/delete_service_point/${id}`
+        );
+        if (response.status == 200) {
+          this.s("Great!", "Removed successfully!");
+        } else {
+          this.e("Oops!", "Something went wrong, please try again!");
+        }
       } else {
-        this.e("Oops!", "Something went wrong, please try again!");
+        const response = await this.callApi(
+          "delete",
+          `/app/delete_service_title/${id}`
+        );
+        if (response.status == 200) {
+          this.s("Great!", "Removed successfully!");
+        } else {
+          this.e("Oops!", "Something went wrong, please try again!");
+        }
       }
+      this.deleteModal = false;
+      this.getService();
       this.sending = false;
     },
     async getService() {

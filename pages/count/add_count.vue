@@ -3,7 +3,7 @@
     <div>
       <Breadcrumb>
         <BreadcrumbItem to="/">Dashboard</BreadcrumbItem>
-        <BreadcrumbItem to="/experiences">Counts</BreadcrumbItem>
+        <BreadcrumbItem to="/count">Counts</BreadcrumbItem>
         <BreadcrumbItem>Add Count</BreadcrumbItem>
       </Breadcrumb>
     </div>
@@ -55,7 +55,6 @@ export default {
       loading: false,
       sending: false,
       formValue: {
-        user_id: authUser.id,
         happyClients: "",
         projectComplete: "",
         yearsOfExperience: "",

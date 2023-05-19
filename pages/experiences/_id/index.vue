@@ -12,20 +12,20 @@
         <Row :gutter="24">
           <Col span="12">
             <FormItem
-              :error="errorMessages.company"
+              :error="errorMessages.institute"
               :required="true"
               label="Company"
             >
-              <Input v-model="formValue.company"></Input>
+              <Input v-model="formValue.institute"></Input>
             </FormItem>
           </Col>
           <Col span="12">
             <FormItem
-              :error="errorMessages.designation"
+              :error="errorMessages.degree"
               :required="true"
               label="Designation"
             >
-              <Input v-model="formValue.designation"></Input>
+              <Input v-model="formValue.degree"></Input>
             </FormItem>
           </Col>
 
@@ -89,15 +89,16 @@ export default {
       sending: false,
       formValue: {
         id: 0,
-        company: "",
-        designation: "",
+        type: "experience",
+        institute: "",
+        degree: "",
         start_date: "",
         end_date: "",
         description: "",
       },
       errorMessages: {
-        company: "",
-        designation: "",
+        institute: "",
+        degree: "",
         start_date: "",
       },
     };
@@ -108,12 +109,12 @@ export default {
 
       this.clearErrorMessages();
 
-      if (this.formValue.company.trim() == "") {
-        this.errorMessages.company = "Company is required!";
+      if (this.formValue.institute.trim() == "") {
+        this.errorMessages.institute = "Company is required!";
         validation = false;
       }
-      if (this.formValue.designation.trim() == "") {
-        this.errorMessages.designation = "Designation is required!";
+      if (this.formValue.degree.trim() == "") {
+        this.errorMessages.degree = "Designation is required!";
         validation = false;
       }
       if (this.formValue.start_date == "") {
@@ -125,7 +126,7 @@ export default {
       this.loading = true;
       const res = await this.callApi(
         "put",
-        "/app/update_experience",
+        "/app/update_aboutMe",
         this.formValue
       );
       if (res.status === 200 || res.status == 201) {
@@ -152,7 +153,7 @@ export default {
       this.loading = true;
       const response = await this.callApi(
         "get",
-        `/app/get_experience/${this.$route.params.id}`
+        `/app/get_aboutMe/${this.$route.params.id}`
       );
       if (response.status == 200) {
         this.formValue = response.data;

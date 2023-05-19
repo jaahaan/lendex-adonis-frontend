@@ -8,7 +8,12 @@ export default {
    ** Nuxt target
    ** See https://nuxtjs.org/api/configuration-target
    */
-  target: "server",
+  // target: "server",
+  target: "static",
+  ssr: "flase",
+  generate: {
+    fallback: true,
+  },
   /*
    ** Headers of the page
    ** See https://nuxtjs.org/api/configuration-head
@@ -48,7 +53,7 @@ export default {
    */
   plugins: [
     "@/plugins/serverSidePlugin",
-
+    { src: "~plugins/quill.js" },
     // { src: '~plugins/serverSidePlugin' ,ssr: 'true'},
     { src: "~plugins/iview", mode: "client" },
   ],

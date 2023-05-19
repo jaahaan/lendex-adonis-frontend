@@ -22,12 +22,6 @@
             placeholder="Ex: Bachelor's"
           ></Input>
         </FormItem>
-        <FormItem label="Field of study">
-          <Input
-            v-model="formValue.fieldOfStudy"
-            placeholder="Field of study"
-          ></Input>
-        </FormItem>
 
         <div class="row">
           <div class="col-6">
@@ -95,9 +89,9 @@ export default {
       loading: false,
       sending: false,
       formValue: {
+        type: "education",
         institute: "",
         degree: "",
-        fieldOfStudy: "",
         start_date: "",
         end_date: "",
         description: "",
@@ -132,7 +126,7 @@ export default {
       this.loading = true;
       const res = await this.callApi(
         "post",
-        "/app/add_education",
+        "/app/add_aboutMe",
         this.formValue
       );
       if (res.status === 201) {

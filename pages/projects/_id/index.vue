@@ -10,35 +10,6 @@
     <div class="common-page-card">
       <Form>
         <Row :gutter="24">
-          <Col span="24">
-            <div class="demo-upload-list" v-if="formValue.image">
-              <img :src="`${http + formValue.image}`" />
-              <div class="demo-upload-list-cover">
-                <Icon
-                  type="ios-trash-outline"
-                  @click.native="handleRemove"
-                ></Icon>
-              </div>
-            </div>
-
-            <div class="mt-3 mb-3" v-else-if="!formValue.image">
-              <Upload
-                ref="formValueUploads"
-                type="drag"
-                :on-success="handleSuccess"
-                :format="['jpg', 'jpeg', 'png']"
-                :max-size="20048"
-                :on-format-error="handleFormatError"
-                :on-exceeded-size="handleMaxSize"
-                action="http://127.0.0.1:3333/app/upload"
-              >
-                <div class="camera-icon">
-                  <Icon type="ios-camera" size="20"></Icon>
-                  Upload Image
-                </div>
-              </Upload>
-            </div>
-          </Col>
           <Col span="12">
             <FormItem
               label="Title"
@@ -87,78 +58,21 @@
               ></Input>
             </FormItem>
           </Col>
-          <Col span="12">
-            <FormItem label="How To Complete">
-              <Input
-                v-model="formValue.how_to_complete"
-                type="textarea"
-                :autosize="{ minRows: 2, maxRows: 5 }"
-                placeholder="Write How To Complete..."
-              ></Input>
-            </FormItem>
+          <Col span="24">
+            <h4 style="margin-bottom: 10px">Description</h4>
           </Col>
-          <Col span="12">
-            <FormItem label="Idea Generate">
-              <Input
-                v-model="formValue.idea_generate"
-                type="textarea"
-                :autosize="{ minRows: 2, maxRows: 5 }"
-                placeholder="Write Idea Generate..."
-              ></Input>
-            </FormItem>
-          </Col>
-          <Col span="12">
-            <FormItem label="Reasearch Sketching">
-              <Input
-                v-model="formValue.reasearch_sketching"
-                type="textarea"
-                :autosize="{ minRows: 2, maxRows: 5 }"
-                placeholder="Write Reasearch Sketching..."
-              ></Input>
-            </FormItem>
-          </Col>
-
-          <Col span="12">
-            <FormItem label="Launced Project">
-              <Input
-                v-model="formValue.launced_project"
-                type="textarea"
-                :autosize="{ minRows: 2, maxRows: 5 }"
-                placeholder="Write Launced Project..."
-              ></Input>
-            </FormItem>
-          </Col>
-
-          <Col span="12">
-            <FormItem label="Result Summery">
-              <Input
-                v-model="formValue.result_summery"
-                type="textarea"
-                :autosize="{ minRows: 2, maxRows: 5 }"
-                placeholder="Write Result Summery..."
-              ></Input>
-            </FormItem>
-          </Col>
-          <Col span="12">
-            <FormItem label="Description">
-              <Input
+          <Col span="24">
+            <div class="quil-editor" style="min-height: 150px">
+              <quill-editor
+                ref="myQuillEditor"
                 v-model="formValue.description"
-                type="textarea"
-                :autosize="{ minRows: 2, maxRows: 5 }"
-                placeholder="Write Description..."
-              ></Input>
-            </FormItem>
+                :autosize="{ minRows: 15, maxRows: 20 }"
+                :options="editorOption"
+                @change="onEditorChange($event)"
+              ></quill-editor>
+            </div>
           </Col>
 
-          <Col span="12">
-            <FormItem label="Budget">
-              <Input
-                type="text"
-                placeholder="Budget"
-                v-model="formValue.budget"
-              ></Input>
-            </FormItem>
-          </Col>
           <Col span="12">
             <FormItem label="Duration">
               <Input
@@ -179,6 +93,40 @@
             </FormItem>
           </Col>
           <Col span="24">
+            <div class="demo-upload-list" v-if="formValue.image">
+              <img :src="`${http + formValue.image}`" />
+              <div class="demo-upload-list-cover">
+                <Icon
+                  type="ios-trash-outline"
+                  @click.native="handleRemove"
+                ></Icon>
+                <Icon
+                  type="ios-trash-outline"
+                  @click.native="handleView(`${http + formValue.image}`)"
+                ></Icon>
+              </div>
+            </div>
+
+            <div class="mt-3 mb-3" v-else-if="!formValue.image">
+              <Upload
+                ref="formValueUploads"
+                type="drag"
+                :on-success="handleSuccess"
+                :format="['jpg', 'jpeg', 'png']"
+                :max-size="20048"
+                :on-format-error="handleFormatError"
+                :on-exceeded-size="handleMaxSize"
+                action="/app/upload"
+                class="upload"
+              >
+                <div class="camera-icon">
+                  <Icon type="ios-camera" size="20"></Icon>
+                  Upload Image
+                </div>
+              </Upload>
+            </div>
+          </Col>
+          <Col span="24">
             <Button type="primary" @click="$router.push('/projects')"
               >Cancel</Button
             ><Button type="primary" @click="save">Save</Button>
@@ -186,11 +134,18 @@
         </Row>
       </Form>
     </div>
+    <Modal title="View Image" v-model="visible">
+      <img :src="modalImageUrl" v-if="visible" style="width: 100%" />
+    </Modal>
   </div>
 </template>
 
 <script>
+import { quillEditor } from "vue-quill-editor";
 export default {
+  components: {
+    quillEditor,
+  },
   data() {
     return {
       loading: false,
@@ -200,15 +155,9 @@ export default {
         image: "",
         title: "",
         subtitle: "",
-        how_to_complete: "",
-        idea_generate: "",
-        reasearch_sketching: "",
-        launced_project: "",
-        result_summery: "",
         description: "",
         project_name: "",
         clients: "",
-        budget: "",
         duration: "",
         date: "",
       },
@@ -217,10 +166,17 @@ export default {
         subtitle: "",
         project_name: "",
       },
+      editorOption: {},
       http: "http://127.0.0.1:3333/uploads/",
+      modalImageUrl: "",
+      visible: false,
     };
   },
   methods: {
+    handleView(item) {
+      this.modalImageUrl = item;
+      this.visible = true;
+    },
     handleSuccess(res, file) {
       res = `${res}`;
       this.formValue.image = res;
@@ -258,6 +214,9 @@ export default {
       const res = await this.callApi("post", "/app/delete_image", {
         imageName: name,
       });
+    },
+    onEditorChange({ quill, html, text }) {
+      this.formValue.description = html;
     },
     async save() {
       let validation = true;

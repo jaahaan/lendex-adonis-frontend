@@ -2,7 +2,7 @@
   <div class="pb-5">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="container-fluid">
-        <a class="navbar-brand" href="#">Navbar</a>
+        <a class="navbar-brand mx-5" href="#">Lendex Admin</a>
         <button
           class="navbar-toggler"
           type="button"
@@ -16,28 +16,35 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav">
+          
             <li class="nav-item">
               <nuxt-link class="nav-link" aria-current="page" to="/"
                 >Dashboard </nuxt-link
               >            
               </li>
+              <li class="nav-item">
+              <nuxt-link class="nav-link" aria-current="page" to="/my_details"
+                >My Details </nuxt-link
+              >            
+              </li>
             <li class="nav-item">
-          <nuxt-link class="nav-link" to="/education" 
-                >Education</nuxt-link
-              >            </li>
+                <nuxt-link class="nav-link" to="/education">
+                Education
+                </nuxt-link>       
+            </li>
             <li class="nav-item">
               <nuxt-link class="nav-link" to="/experiences" 
                 >Experience</nuxt-link
               >
             </li>
-           <li class="nav-item">
+            <li class="nav-item">
               <nuxt-link class="nav-link" to="/projects" 
                 >Projects</nuxt-link
               >
             </li>
             <li class="nav-item">
-              <nuxt-link class="nav-link" to="/satisfied_clients" 
-                >Satisfied Clients</nuxt-link
+              <nuxt-link class="nav-link" to="/testimonials" 
+                >Testimonial</nuxt-link
               >
             </li>
             <li class="nav-item">
@@ -45,11 +52,7 @@
                 >Service</nuxt-link
               >
             </li>
-            <li class="nav-item">
-              <nuxt-link class="nav-link" to="/service_planning" 
-                >Service Planning</nuxt-link
-              >
-            </li>
+            
             <li class="nav-item">
               <nuxt-link class="nav-link" to="/special-skills" 
                 >Special Skills</nuxt-link

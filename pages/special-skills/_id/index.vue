@@ -58,7 +58,7 @@ export default {
       parentMenu: [],
       formValue: {
         id: 0,
-        parent_id: null,
+        title_id: null,
         title: "",
         icon: "",
       },

@@ -1,7 +1,6 @@
 //import Vuex from 'vuex'
 //import axios from 'axios'
 export const strict = false;
-import cookie from "cookie";
 
 export const state = () => ({
   user: "no user",
@@ -71,19 +70,13 @@ export const mutations = {
 export const actions = {
   async nuxtServerInit({ commit, state }, { $axios, req, env }) {
     console.log("I am running as nuxt server init");
-    const session = req.headers.cookie ? cookie.parse(req.headers.cookie) : "";
+    // const session = req.headers.cookie ? cookie.parse(req.headers.cookie) : "";
     // console.log("token : ",session)
-    $axios.setToken(session.token, "Bearer");
+    // $axios.setToken(session.token, "Bearer");
     try {
       const res = await $axios.get("/app/auth_user");
       console.log(res.data);
       commit("setAuthInfo", res.data);
-      const cart = await $axios.get(`/app/get_cart`);
-      if (cart.status == 200) {
-        // console.log(cart.data);
-        state.order.invoiceTotal = cart.data.total;
-        commit("updateCart", cart.data.data);
-      }
     } catch (e) {
       console.log("nuxt server error ");
     }

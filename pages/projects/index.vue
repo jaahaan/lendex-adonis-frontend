@@ -14,6 +14,17 @@
     >
 
     <Table border :loading="loading" :columns="columns1" :data="data1">
+      <template slot-scope="{ index }" slot="image">
+        <div class="demo-upload-list">
+          <img :src="`${http + data1[index].image}`" />
+          <div class="demo-upload-list-cover">
+            <Icon
+              type="ios-eye-outline"
+              @click.native="handleView(`${http + data1[index].image}`)"
+            ></Icon>
+          </div>
+        </div>
+      </template>
       <template slot-scope="{ index }" slot="details">
         <Button type="warning" size="small" ghost @click="showView(index)"
           >Show Details</Button
@@ -61,6 +72,9 @@
         ></Table>
       </div>
     </Modal>
+    <Modal title="View Image" v-model="visible">
+      <img :src="modalImageUrl" v-if="visible" style="width: 100%" />
+    </Modal>
   </div>
 </template>
 
@@ -80,6 +94,11 @@ export default {
         name: "",
       },
       columns1: [
+        {
+          title: "Image",
+          slot: "image",
+          width: 110,
+        },
         {
           title: "Project Name",
           key: "project_name",
@@ -220,6 +239,9 @@ export default {
         ],
       },
       data1: [],
+      modalImageUrl: "",
+      visible: false,
+      http: "http://127.0.0.1:3333/uploads/",
     };
   },
   computed: {
@@ -231,6 +253,10 @@ export default {
     },
   },
   methods: {
+    handleView(item) {
+      this.modalImageUrl = item;
+      this.visible = true;
+    },
     showEdit(index) {
       this.$router.push(`/projects/${this.data1[index].id}`);
     },

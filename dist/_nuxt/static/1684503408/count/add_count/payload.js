@@ -1,0 +1,1 @@
+__NUXT_JSONP__("/count/add_count", {data:[{}],fetch:{},mutations:[]});

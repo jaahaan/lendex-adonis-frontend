@@ -1,0 +1,1 @@
+__NUXT_JSONP__("/setup/settings/company-settings/main-settings/edit_settings", {data:[{}],fetch:{},mutations:[]});

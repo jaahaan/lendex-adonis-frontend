@@ -10,13 +10,18 @@
     <div class="common-page-card">
       <Form>
         <Row :gutter="24">
-          <Col span="24">
+          <Col :xs="24" :sm="24" :md="12" :lg="12">
+            <h6 class="mb-2">Image</h6>
             <div class="demo-upload-list" v-if="formValue.image">
               <img :src="`${http + formValue.image}`" />
               <div class="demo-upload-list-cover">
                 <Icon
+                  type="ios-eye-outline"
+                  @click.native="handleView(`${http + formValue.image}`)"
+                ></Icon>
+                <Icon
                   type="ios-trash-outline"
-                  @click.native="handleRemove"
+                  @click.native="handleRemoveImage"
                 ></Icon>
               </div>
             </div>
@@ -26,12 +31,13 @@
                 ref="formValueUploads"
                 type="drag"
                 :headers="crfObj"
-                :on-success="handleSuccess"
+                :on-success="handleSuccessImage"
                 :format="['jpg', 'jpeg', 'png']"
                 :max-size="20048"
                 :on-format-error="handleFormatError"
                 :on-exceeded-size="handleMaxSize"
                 action="http://127.0.0.1:3333/app/upload"
+                class="upload"
               >
                 <div class="camera-icon">
                   <Icon type="ios-camera" size="20"></Icon>
@@ -40,41 +46,60 @@
               </Upload>
             </div>
           </Col>
-          <Col span="12">
-            <FormItem label="Name">
-              <Input
-                type="text"
-                placeholder="Name"
-                v-model="formValue.name"
-              ></Input>
-            </FormItem>
-          </Col>
-          <Col span="12">
-            <FormItem label="Icon">
-              <Input
-                type="text"
-                placeholder="Icon"
-                v-model="formValue.icon"
-              ></Input>
-            </FormItem>
-          </Col>
-          <Col span="12">
-            <FormItem label="Moto">
-              <Input
-                type="text"
-                placeholder="Moto"
-                v-model="formValue.moto"
-              ></Input>
-            </FormItem>
+          <Col :xs="24" :sm="24" :md="12" :lg="12">
+            <h6 class="mb-2">Hover Image</h6>
+            <div class="demo-upload-list" v-if="formValue.hover_image">
+              <img :src="`${http + formValue.hover_image}`" />
+              <div class="demo-upload-list-cover">
+                <Icon
+                  type="ios-eye-outline"
+                  @click.native="handleView(`${http + formValue.hover_image}`)"
+                ></Icon>
+                <Icon
+                  type="ios-trash-outline"
+                  @click.native="handleRemovehover_image"
+                ></Icon>
+              </div>
+            </div>
+
+            <div class="mt-3 mb-3" v-else-if="!formValue.hover_image">
+              <Upload
+                ref="formValueUploads"
+                type="drag"
+                :headers="crfObj"
+                :on-success="handleSuccesshover_image"
+                :format="['jpg', 'jpeg', 'png']"
+                :max-size="20048"
+                :on-format-error="handleFormatError"
+                :on-exceeded-size="handleMaxSize"
+                action="http://127.0.0.1:3333/app/upload"
+                class="upload"
+              >
+                <div class="camera-icon">
+                  <Icon type="ios-camera" size="20"></Icon>
+                  Upload Image
+                </div>
+              </Upload>
+            </div>
           </Col>
           <Col span="24">
-            <Button type="primary" @click="$router.push('/trusted_company')"
-              >Cancel</Button
-            ><Button type="primary" @click="save">Save</Button>
+            <Button
+              type="primary"
+              :loading="loading"
+              @click="save"
+              style="margin-right: 10px"
+            >
+              <span v-if="!loading">Add</span>
+              <span v-else>Please wait...</span>
+            </Button>
+            <Button @click="$router.push('/trusted_company')">Cancel</Button>
           </Col>
         </Row>
       </Form>
     </div>
+    <Modal title="View Image" v-model="visible">
+      <img :src="modalImageUrl" v-if="visible" style="width: 100%" />
+    </Modal>
   </div>
 </template>
 
@@ -86,19 +111,46 @@ export default {
       sending: false,
       formValue: {
         image: "",
-        name: "",
-        icon: "",
-        moto: "",
+        hover_image: "",
       },
 
       http: "http://127.0.0.1:3333/uploads/",
+      modalImageUrl: "",
+      visible: false,
     };
   },
   methods: {
-    handleSuccess(res, file) {
+    handleView(item) {
+      this.modalImageUrl = item;
+      this.visible = true;
+    },
+    handleSuccessImage(res, file) {
       res = `${res}`;
       this.formValue.image = res;
     },
+    handleSuccesshover_image(res, file) {
+      res = `${res}`;
+      this.formValue.hover_image = res;
+    },
+    async handleRemoveImage() {
+      let name;
+      name = this.formValue.image;
+      this.formValue.image = "";
+
+      const res = await this.callApi("post", "/app/delete_image", {
+        imageName: name,
+      });
+    },
+    async handleRemovehover_image() {
+      let name;
+      name = this.formValue.hover_image;
+      this.formValue.hover_image = "";
+
+      const res = await this.callApi("post", "/app/delete_image", {
+        imageName: name,
+      });
+    },
+
     handleError(res, file) {
       this.$Notice.warning({
         title: "The file format is incorrect",
@@ -109,6 +161,7 @@ export default {
         }`,
       });
     },
+
     handleFormatError(file) {
       this.$Notice.warning({
         title: "The file format is incorrect",
@@ -118,21 +171,14 @@ export default {
           " is incorrect, please select jpg or png.",
       });
     },
+
     handleMaxSize(file) {
       this.$Notice.warning({
         title: "Exceeding file size limit",
         desc: "File  " + file.name + " is too large, no more than 2M.",
       });
     },
-    async handleRemove() {
-      let name;
-      name = this.formValue.image;
-      this.formValue.image = "";
 
-      const res = await this.callApi("post", "/app/delete_image", {
-        imageName: name,
-      });
-    },
     async save() {
       this.loading = true;
       const res = await this.callApi(

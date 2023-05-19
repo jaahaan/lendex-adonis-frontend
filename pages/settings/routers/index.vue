@@ -349,7 +349,7 @@ export default {
         this.s("Routers Updated Successfully");
         this.getRouters();
         this.getRoutersAfterUpdate();
-      } else this.swr();
+      }
     },
     async returnBack() {
       this.data1 = [];
@@ -360,11 +360,11 @@ export default {
       );
       if (response.status == 200) {
         this.data1 = response.data.data;
-        response.data.parent_id
-          ? (this.childRouteId = response.data.parent_id)
+        response.data.title_id
+          ? (this.childRouteId = response.data.title_id)
           : (this.childRouteId = 0);
         this.newList();
-      } else this.swr();
+      }
       this.loading = false;
     },
     async getRoutersAfterUpdate() {
@@ -377,7 +377,7 @@ export default {
         // this.data1=response.data;
         this.$store.commit("setSideBar", response.data);
         // this.newList();
-      } else this.e("Oops!", "Something went wrong, please try again!");
+      }
       this.loading = false;
     },
     showDetails(index) {
@@ -407,7 +407,7 @@ export default {
 
       ob = {
         name: "Parent ID",
-        value: this.data1[index].parent_id,
+        value: this.data1[index].title_id,
       };
       this.detailsItem.data.push(ob);
       ob = {
@@ -495,7 +495,6 @@ export default {
       } else {
         this.sending = false;
         this.deleteModal = false;
-        this.e("Oops!", "Something went wrong, please try again!");
       }
     },
     async getRouters() {
@@ -510,7 +509,7 @@ export default {
         this.newList();
         // this.data1=response.data.data;
         // this.pagination=response.data;
-      } else this.e("Oops!", "Something went wrong, please try again!");
+      }
       this.loading = false;
     },
   },

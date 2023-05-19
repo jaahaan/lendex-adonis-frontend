@@ -150,8 +150,6 @@ export default {
         this.s("Great!", "Removed successfully!");
         this.deleteModal = false;
         this.getExperiences();
-      } else {
-        this.e("Oops!", "Something went wrong, please try again!");
       }
       this.sending = false;
     },
@@ -163,7 +161,7 @@ export default {
       );
       if (response.status == 200) {
         this.data1 = response.data;
-      } else this.e("Oops!", "Something went wrong, please try again!");
+      }
       this.loading = false;
     },
   },

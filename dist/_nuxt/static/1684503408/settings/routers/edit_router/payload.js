@@ -1,0 +1,1 @@
+__NUXT_JSONP__("/settings/routers/edit_router", {data:[{}],fetch:{},mutations:[]});

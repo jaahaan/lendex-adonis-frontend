@@ -1,64 +1,110 @@
 <template>
-  <div class="container">
-    <Breadcrumb>
-      <BreadcrumbItem to="/">Dashboard</BreadcrumbItem>
-      <BreadcrumbItem>Trusted Companies</BreadcrumbItem>
-    </Breadcrumb>
-
-    <Button
-      type="primary"
-      class="my-3"
-      @click="$router.push('/trusted_company/add_trusted_company')"
-    >
-      Add Trusted Companies</Button
-    >
-
-    <Table border :loading="loading" :columns="columns1" :data="data1">
-      <template slot-scope="{ index }" slot="image">
-        <img :src="`${http + data1.image}`" />
-      </template>
-      <template slot="loading">
-        <h4 class="table-loading">
-          <i class="ivu-load-loop ivu-icon ivu-icon-ios-loading"></i
-          ><span style="margin-left: 10px">Loading Data...</span>
-        </h4>
-      </template>
-    </Table>
-
-    <Modal v-model="deleteModal" width="360">
-      <p slot="header" style="color: #f60; text-align: center">
-        <Icon type="close"></Icon>
-        <span> Delete {{ UpdateValue.name }}</span>
-      </p>
-      <div>
-        <div style="margin-bottom: 20px">
-          Are you sure you want delete {{ UpdateValue.name }}
+  <div class="_content">
+    <div class="common-page-card">
+      <Row>
+        <Col span="24">
+          <Form ref="formInline" inline>
+            <FormItem>
+              <Button
+                type="primary"
+                @click="$router.push('/trusted_company/add_trusted_company')"
+              >
+                Add Trusted Companies</Button
+              >
+            </FormItem>
+          </Form>
+        </Col>
+        <Col span="24">
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Image</th>
+                <th scope="col">Hover Image</th>
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(data, index) in data1">
+                <td>
+                  <div class="demo-upload-list">
+                    <img :src="`${http + data.image}`" />
+                    <div class="demo-upload-list-cover">
+                      <Icon
+                        type="ios-eye-outline"
+                        @click.native="handleView(`${http + data.image}`)"
+                      ></Icon>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div class="demo-upload-list" v-if="data.hover_image">
+                    <img :src="`${http + data.hover_image}`" />
+                    <div class="demo-upload-list-cover">
+                      <Icon
+                        type="ios-eye-outline"
+                        @click.native="handleView(`${http + data.hover_image}`)"
+                      ></Icon>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <Button
+                    type="warning"
+                    size="small"
+                    ghost
+                    @click="showEdit(index)"
+                    style="margin-right: 5px"
+                    >Edit</Button
+                  >
+                  <Button
+                    type="error"
+                    size="small"
+                    ghost
+                    @click="showRemove(index)"
+                    >Remove</Button
+                  >
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div v-if="loading">
+            <h4 class="table-loading">
+              <i class="ivu-load-loop ivu-icon ivu-icon-ios-loading"></i
+              ><span style="margin-left: 10px">Loading Data...</span>
+            </h4>
+          </div>
+        </Col>
+      </Row>
+    </div>
+    <div v-if="!loading">
+      <Modal v-model="deleteModal" width="360">
+        <p slot="header" style="color: #f60; text-align: center">
+          <Icon type="close"></Icon>
+          <span> Delete {{ UpdateValue.name }}</span>
+        </p>
+        <div>
+          <div style="margin-bottom: 20px">
+            Are you sure you want delete {{ UpdateValue.name }}
+          </div>
         </div>
-      </div>
-      <div slot="footer">
-        <Button
-          type="error"
-          size="large"
-          long
-          :loading="sending"
-          @click="remove"
-        >
-          <span v-if="!loading">Delete</span>
-          <span v-else>Deleting...</span>
-        </Button>
-      </div>
-    </Modal>
+        <div slot="footer">
+          <Button
+            type="error"
+            size="large"
+            long
+            :loading="sending"
+            @click="remove"
+          >
+            <span v-if="!loading">Delete</span>
+            <span v-else>Deleting...</span>
+          </Button>
+        </div>
+      </Modal>
 
-    <Modal v-model="viewModal" :title="detailsItem.title" :footer-hide="true">
-      <div class="_item_details">
-        <Table
-          border
-          :columns="detailsColum"
-          :data="detailsItem.data"
-          :show-header="false"
-        ></Table>
-      </div>
-    </Modal>
+      <Modal title="View Image" v-model="visible">
+        <img :src="modalImageUrl" v-if="visible" style="width: 100%" />
+      </Modal>
+    </div>
   </div>
 </template>
 
@@ -72,7 +118,7 @@ export default {
       loading: false,
       sending: false,
       isCollapsed: false,
-      http: "http://127.0.0.1:8000/attachments/",
+      http: "http://127.0.0.1:3333/uploads/",
 
       UpdateValue: {
         indexNumber: null,
@@ -82,23 +128,12 @@ export default {
       columns1: [
         {
           title: "Image",
-          key: "image",
+          slot: "image",
           minWidth: 150,
         },
         {
-          title: "Name",
-          key: "name",
-          minWidth: 150,
-        },
-        {
-          title: "Icon",
-          key: "icon",
-          minWidth: 150,
-        },
-
-        {
-          title: "Moto",
-          key: "moto",
+          title: "Hover Image",
+          slot: "hover_image",
           minWidth: 150,
         },
 
@@ -217,6 +252,8 @@ export default {
         ],
       },
       data1: [],
+      modalImageUrl: "",
+      visible: false,
     };
   },
   computed: {
@@ -228,6 +265,10 @@ export default {
     },
   },
   methods: {
+    handleView(item) {
+      this.modalImageUrl = item;
+      this.visible = true;
+    },
     showEdit(index) {
       this.$router.push(`/trusted_company/${this.data1[index].id}`);
     },
@@ -258,22 +299,22 @@ export default {
       this.detailsItem.data.push(ob);
       ob = {
         name: "Idea Generate",
-        value: this.data1[index].idea_generate,
+        value: this.data1[index].ideaGenerate,
       };
       this.detailsItem.data.push(ob);
       ob = {
         name: "Reasearch Sketching",
-        value: this.data1[index].reasearch_sketching,
+        value: this.data1[index].reasearchSketching,
       };
       this.detailsItem.data.push(ob);
       ob = {
         name: "Launced Project",
-        value: this.data1[index].launced_project,
+        value: this.data1[index].launcedProject,
       };
       this.detailsItem.data.push(ob);
       ob = {
         name: "Result Summery",
-        value: this.data1[index].result_summery,
+        value: this.data1[index].ResultSummery,
       };
       this.detailsItem.data.push(ob);
 
@@ -316,17 +357,28 @@ export default {
       this.UpdateValue.indexNumber = index;
       this.deleteModal = true;
     },
-    async handleRemove() {
+    async handleRemoveImage() {
       let name;
       name = this.data1[this.UpdateValue.indexNumber].image;
+
+      const res = await this.callApi("post", "/app/delete_image", {
+        imageName: name,
+      });
+    },
+    async handleRemovehover_image() {
+      let name;
+      name = this.data1[this.UpdateValue.indexNumber].hover_image;
+
       const res = await this.callApi("post", "/app/delete_image", {
         imageName: name,
       });
     },
     async remove() {
       this.sending = true;
+      this.handleRemoveImage();
+      this.handleRemovehover_image();
+
       let id = this.UpdateValue.id;
-      this.handleRemove();
       const response = await this.callApi(
         "delete",
         `/app/delete_trusted_company/${id}`
@@ -359,11 +411,7 @@ export default {
 };
 </script>
 <style scoped>
-.account_details_p {
-  width: 100%;
-  display: inline-block;
-  text-align: start;
-  font-size: 16px;
-  font-weight: 600;
+td {
+  text-align: center;
 }
 </style>

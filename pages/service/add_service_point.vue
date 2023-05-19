@@ -13,11 +13,11 @@
           <Col :xs="24" :sm="24" :md="12" :lg="12">
             <FormItem
               label="Title"
-              :error="errorMessages.parent_id"
+              :error="errorMessages.title_id"
               :required="true"
             >
               <Select
-                v-model="formValue.parent_id"
+                v-model="formValue.title_id"
                 placeholder="Select Title"
                 filterable
                 clearable
@@ -30,7 +30,7 @@
                   >{{ item.title }}</Option
                 >
               </Select>
-              <!-- <Input type="number" placeholder="Parent ID"  v-model="formValue.parent_id"></Input> -->
+              <!-- <Input type="number" placeholder="Parent ID"  v-model="formValue.title_id"></Input> -->
             </FormItem>
           </Col>
           <Col :xs="24" :sm="24" :md="12" :lg="12">
@@ -44,12 +44,6 @@
                 placeholder="Point"
                 v-model="formValue.title"
               ></Input>
-            </FormItem>
-          </Col>
-
-          <Col :xs="24" :sm="24" :md="12" :lg="12">
-            <FormItem label="Icon">
-              <Input placeholder="Icon" v-model="formValue.icon"></Input>
             </FormItem>
           </Col>
 
@@ -79,14 +73,12 @@ export default {
       sending: false,
       parentMenu: [],
       formValue: {
-        parent_id: "",
+        title_id: "",
         title: "",
-        icon: "",
       },
       errorMessages: {
-        parent_id: "",
+        title_id: "",
         title: "",
-        icon: "",
       },
     };
   },
@@ -95,8 +87,8 @@ export default {
       let validation = true;
 
       this.clearErrorMessages();
-      if (this.formValue.parent_id == "") {
-        this.errorMessages.parent_id = "Title is required!";
+      if (this.formValue.title_id == "") {
+        this.errorMessages.title_id = "Title is required!";
         validation = false;
       }
 
@@ -110,7 +102,7 @@ export default {
       this.loading = true;
       const res = await this.callApi(
         "post",
-        "/app/add_service",
+        "/app/add_service_point",
         this.formValue
       );
       if (res.status === 200 || res.status == 201) {
@@ -129,7 +121,7 @@ export default {
     clearErrorMessages() {
       this.errorMessages = {
         title: "",
-        icon: "",
+        title_id: "",
       };
     },
     async changeParentMenu(query) {
